@@ -1,12 +1,46 @@
 """
 ShopCatch MCP 서버 진입점
-FastAPI를 사용하지 않는 Pure MCP 구현으로 ASGI 충돌 완전 제거
+디버깅 정보 강화 버전
 """
 import sys
-import asyncio
-from config import settings
-from utils.logger import logger
-from server.mcp_server import mcp
+import os
+
+# 디버깅: 현재 작업 디렉토리와 Python 경로 출력
+print(f"🔍 Current Working Directory: {os.getcwd()}")
+print(f"🔍 Python Path: {sys.path}")
+print(f"🔍 Script Location: {os.path.abspath(__file__)}")
+print(f"🔍 Directory Contents: {os.listdir('.')}")
+
+# 프로젝트 루트를 Python 경로에 추가
+project_root = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, project_root)
+print(f"✅ Added to path: {project_root}")
+
+# 디렉토리 존재 확인
+required_dirs = ['server', 'services', 'utils']
+for dir_name in required_dirs:
+    dir_path = os.path.join(project_root, dir_name)
+    exists = os.path.exists(dir_path)
+    has_init = os.path.exists(os.path.join(dir_path, '__init__.py'))
+    print(f"📁 {dir_name}: exists={exists}, has_init={has_init}")
+
+try:
+    print("\n🔄 Importing modules...")
+    from config import settings
+    print("✅ config imported")
+    
+    from utils.logger import logger
+    print("✅ logger imported")
+    
+    from server.mcp_server import mcp
+    print("✅ mcp_server imported")
+    
+except ImportError as e:
+    print(f"❌ Import Error: {e}")
+    print(f"❌ Error details: {e.__class__.__name__}")
+    import traceback
+    traceback.print_exc()
+    sys.exit(1)
 
 
 def validate_environment():
@@ -40,8 +74,7 @@ def main():
         logger.info(f"📊 Log Level: {settings.LOG_LEVEL}")
         logger.info("=" * 60)
         
-        # Pure MCP 서버 실행 (FastAPI 없음)
-        # 이 방식이 SSE 충돌을 완전히 방지합니다
+        # Pure MCP 서버 실행
         mcp.run(
             transport=settings.MCP_TRANSPORT,
             host=settings.HOST,
