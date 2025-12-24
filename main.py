@@ -1,10 +1,9 @@
 """
 ShopCatch MCP 서버 진입점
-Application Exited Early 해결 버전
+Render 포트 바인딩 및 외부 접속(0.0.0.0) 해결 버전
 """
 import sys
 import os
-import asyncio
 
 # 프로젝트 루트를 Python 경로에 추가
 project_root = os.path.dirname(os.path.abspath(__file__))
@@ -31,14 +30,21 @@ def main():
     try:
         validate_environment()
         
+        # Render 환경 변수에서 포트를 가져오고, 기본값으로 10000을 설정합니다.
+        port_env = int(os.environ.get("PORT", 10000))
+        
         logger.info("=" * 60)
         logger.info(f"🏪 {settings.MCP_SERVER_NAME} MCP Server Starting...")
-        logger.info(f"🚀 Render 배포 모드 (SSE)")
+        logger.info(f"🚀 Binding to 0.0.0.0:{port_env} (Render Mode)")
         logger.info("=" * 60)
         
-        # ✅ 해결책: transport를 명시하고, 비동기적으로 실행이 유지되도록 합니다.
-        # FastMCP의 run 메서드는 transport="sse"가 주어지면 내부적으로 서버 엔진을 가동합니다.
-        mcp.run(transport="sse")
+        # ✅ 핵심 수정: host="0.0.0.0"으로 설정하여 외부 접속을 허용합니다.
+        # port를 Render가 요구하는 포트(10000)로 일치시킵니다.
+        mcp.run(
+            transport="sse",
+            host="0.0.0.0",
+            port=port_env
+        )
     
     except Exception as e:
         logger.error(f"❌ 서버 가동 중 오류 발생: {e}", exc_info=True)
