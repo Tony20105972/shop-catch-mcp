@@ -1,6 +1,6 @@
 """
 ShopCatch MCP 서버 진입점
-TypeError (host 인자 에러) 해결 버전
+최종 안정화 버전: 인자 없는 mcp.run() 사용
 """
 import sys
 import os
@@ -32,15 +32,13 @@ def main():
         
         logger.info("=" * 60)
         logger.info(f"🏪 {settings.MCP_SERVER_NAME} MCP Server Starting...")
-        logger.info(f"🚀 Transport: {settings.MCP_TRANSPORT} | Port: {settings.PORT}")
+        logger.info(f"🚀 자동 설정 모드로 서버를 시작합니다.")
         logger.info("=" * 60)
         
-        # ✅ 핵심 수정: host 인자를 제거하고 port만 전달합니다.
-        # FastMCP 내부적으로 uvicorn을 실행하며 기본적으로 0.0.0.0에 바인딩됩니다.
-        mcp.run(
-            transport=settings.MCP_TRANSPORT,
-            port=settings.PORT
-        )
+        # ✅ 최종 해결책: 인자를 비우고 호출합니다.
+        # 이렇게 하면 FastMCP 내부의 자동 감지 로직이 
+        # 환경 변수 PORT를 찾아 0.0.0.0:10000으로 서버를 띄웁니다.
+        mcp.run()
     
     except Exception as e:
         logger.error(f"❌ 서버 시작 실패: {e}", exc_info=True)
