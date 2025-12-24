@@ -134,27 +134,27 @@ async def get_lowest_price(keyword: str) -> str:
 
 
 # 서버 라이프사이클 이벤트
-@mcp.on_startup()
-async def startup():
-    """서버 시작 시 실행"""
-    logger.info(f"🚀 {settings.MCP_SERVER_NAME} 서버 시작")
-    logger.info(f"환경: {settings.ENVIRONMENT}")
-    logger.info(f"포트: {settings.PORT}")
-    logger.info(f"로그 레벨: {settings.LOG_LEVEL}")
+#@mcp.on_startup()
+#async def startup():
+    #"""서버 시작 시 실행"""
+    #logger.info(f"🚀 {settings.MCP_SERVER_NAME} 서버 시작")
+    #logger.info(f"환경: {settings.ENVIRONMENT}")
+    #logger.info(f"포트: {settings.PORT}")
+    #logger.info(f"로그 레벨: {settings.LOG_LEVEL}")
 
 
-@mcp.on_shutdown()
-async def shutdown():
-    """서버 종료 시 실행 (리소스 정리)"""
-    logger.info("🛑 서버 종료 중...")
+#@mcp.on_shutdown()
+#async def shutdown():
+    #"""서버 종료 시 실행 (리소스 정리)"""
+    #logger.info("🛑 서버 종료 중...")
     
     # HTTP 클라이언트 정리
-    from services.naver_api import get_naver_client
-    try:
-        client = get_naver_client()
-        await client.close()
-        logger.info("✅ 네이버 API 클라이언트 정리 완료")
-    except Exception as e:
-        logger.error(f"클라이언트 정리 중 오류: {e}")
+   # from services.naver_api import get_naver_client
+    #try:
+        #client = get_naver_client()
+       # await client.close()
+        #logger.info("✅ 네이버 API 클라이언트 정리 완료")
+    #except Exception as e:
+        #logger.error(f"클라이언트 정리 중 오류: {e}")
     
-    logger.info("👋 서버 종료 완료")
+    #logger.info("👋 서버 종료 완료")
