@@ -9,17 +9,20 @@ sys.path.insert(0, project_root)
 from server.mcp_server import mcp
 
 def main():
+    # Render 환경 변수에서 포트 번호를 가져옵니다.
     port = int(os.environ.get("PORT", 10000))
     
     print("=" * 60)
-    print(f"🚀 ShopCatch MCP Server - Final Fix")
+    print(f"🚀 ShopCatch MCP Server - Fixed")
     print(f"📡 Binding to 0.0.0.0:{port}")
     print("=" * 60)
 
-    # ✅ mcp.app은 Starlette/FastAPI 앱 객체입니다.
-    # uvicorn은 이 'app' 객체를 실행해야 합니다.
+    # ✅ 해결 방법: FastMCP는 .app 속성 대신 .get_asgi_app() 메서드를 제공합니다.
+    # 이 메서드가 uvicorn이 실행할 수 있는 Starlette/ASGI 객체를 반환합니다.
+    app = mcp.get_asgi_app()
+
     uvicorn.run(
-        mcp.app,  # mcp 자체가 아니라 mcp.app을 전달
+        app,
         host="0.0.0.0", 
         port=port, 
         log_level="info"
