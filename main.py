@@ -1,9 +1,10 @@
 """
 ShopCatch MCP 서버 진입점
-최종 안정화 버전: 인자 없는 mcp.run() 사용
+Application Exited Early 해결 버전
 """
 import sys
 import os
+import asyncio
 
 # 프로젝트 루트를 Python 경로에 추가
 project_root = os.path.dirname(os.path.abspath(__file__))
@@ -32,16 +33,15 @@ def main():
         
         logger.info("=" * 60)
         logger.info(f"🏪 {settings.MCP_SERVER_NAME} MCP Server Starting...")
-        logger.info(f"🚀 자동 설정 모드로 서버를 시작합니다.")
+        logger.info(f"🚀 Render 배포 모드 (SSE)")
         logger.info("=" * 60)
         
-        # ✅ 최종 해결책: 인자를 비우고 호출합니다.
-        # 이렇게 하면 FastMCP 내부의 자동 감지 로직이 
-        # 환경 변수 PORT를 찾아 0.0.0.0:10000으로 서버를 띄웁니다.
-        mcp.run()
+        # ✅ 해결책: transport를 명시하고, 비동기적으로 실행이 유지되도록 합니다.
+        # FastMCP의 run 메서드는 transport="sse"가 주어지면 내부적으로 서버 엔진을 가동합니다.
+        mcp.run(transport="sse")
     
     except Exception as e:
-        logger.error(f"❌ 서버 시작 실패: {e}", exc_info=True)
+        logger.error(f"❌ 서버 가동 중 오류 발생: {e}", exc_info=True)
         sys.exit(1)
 
 if __name__ == "__main__":
